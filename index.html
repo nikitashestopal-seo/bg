@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Горящий зад Тимура, Паши и Никитосика (без Полины)</title>
+<style>
+  :root{
+    --bg:#120d08;
+    --bg2:#1a130b;
+    --panel:#221808;
+    --panel2:#2c2010;
+    --gold:#e0b24c;
+    --gold-dim:#b08628;
+    --brass:#7a5c22;
+    --ink:#f3e7cc;
+    --ink-dim:#b6a884;
+    --line:#3d2e12;
+    --ok:#6fbf73;
+    --warn:#d98b3c;
+    --danger:#d15b4a;
+    --shadow:0 8px 30px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -200px, #2a1e0c 0%, transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Georgia","Times New Roman",serif;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:24px 18px 80px}
+  header.top{
+    text-align:center;
+    padding:26px 12px 20px;
+    border-bottom:2px solid var(--brass);
+    margin-bottom:26px;
+    position:relative;
+  }
+  header.top:before,header.top:after{
+    content:"⚜";color:var(--gold-dim);font-size:20px;
+    position:absolute;bottom:-12px;background:var(--bg);padding:0 8px;
+  }
+  header.top:before{left:calc(50% - 60px)}
+  header.top:after{right:calc(50% - 60px)}
+  h1{
+    font-size:26px;margin:0 0 4px;letter-spacing:.3px;line-height:1.2;
+    color:var(--gold);
+    text-shadow:0 2px 0 #000;
+  }
+  @media(max-width:600px){ h1{font-size:20px} }
+  .subtitle{color:var(--ink-dim);font-size:14px;font-style:italic}
+  .patch-badge{
+    display:inline-block;margin-top:10px;font-family:"Courier New",monospace;
+    font-size:12px;letter-spacing:1px;color:var(--gold-dim);
+    border:1px solid var(--brass);border-radius:2px;padding:3px 10px;
+    background:rgba(0,0,0,.3);
+  }
+
+  .grid{display:flex;flex-direction:column}
+  .grid > .panel{margin-bottom:20px}
+  @media(min-width:860px){
+    .grid{flex-direction:row;align-items:flex-start}
+    .grid > .panel:first-child{width:340px;flex:none;margin-right:20px;margin-bottom:0}
+    .grid > .panel:last-child{flex:1;margin-bottom:0}
+  }
+
+  .panel{
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--line);
+    border-radius:6px;
+    box-shadow:var(--shadow);
+    padding:18px;
+  }
+  .panel h2{
+    font-size:16px;margin:0 0 14px;color:var(--gold);
+    text-transform:uppercase;letter-spacing:1.5px;
+    border-bottom:1px solid var(--line);padding-bottom:8px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .panel h2 .num{
+    font-family:"Courier New",monospace;font-size:13px;color:var(--brass);
+    border:1px solid var(--brass);border-radius:50%;width:22px;height:22px;
+    display:inline-flex;align-items:center;justify-content:center;flex:none;
+  }
+
+  .hint{font-size:12px;color:var(--ink-dim);font-style:italic;margin:-6px 0 12px}
+
+  /* tribe checkboxes */
+  .tribes{display:flex;flex-wrap:wrap;margin:-4px}
+  .tribes .tribe{flex:1 1 calc(50% - 8px);margin:4px}
+  .tribe{
+    display:flex;align-items:center;gap:8px;cursor:pointer;
+    padding:8px 10px;border:1px solid var(--line);border-radius:4px;
+    background:rgba(0,0,0,.2);transition:.15s;-webkit-user-select:none;user-select:none;font-size:14px;
+  }
+  .tribe:hover{border-color:var(--gold-dim);background:rgba(224,178,76,.06)}
+  .tribe.on{border-color:var(--gold);background:rgba(224,178,76,.13);color:var(--gold)}
+  .tribe .ic{font-size:16px;width:20px;text-align:center}
+  .tribe input{display:none}
+
+  .field{margin-top:16px}
+  .field label{display:block;font-size:13px;color:var(--gold-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+  input[type=text]{
+    width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);
+    color:var(--ink);border-radius:4px;padding:9px 10px;font-family:inherit;font-size:14px;
+  }
+  input[type=text]:focus{outline:none;border-color:var(--gold-dim)}
+  select{
+    width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);
+    color:var(--ink);border-radius:4px;padding:9px 10px;font-family:inherit;font-size:14px;
+    cursor:pointer;appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--gold-dim) 50%),linear-gradient(135deg,var(--gold-dim) 50%,transparent 50%);
+    background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;
+    background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+  }
+  select:focus{outline:none;border-color:var(--gold-dim)}
+  select option{background:#1a130b;color:var(--ink)}
+
+  /* hero inputs */
+  .heroes{display:flex;flex-direction:column}
+  .heroes select{margin-bottom:8px}
+
+  .btn-row{display:flex;gap:10px;margin-top:18px}
+  button.cta{
+    flex:1;background:linear-gradient(180deg,var(--gold),var(--gold-dim));
+    color:#1a1206;border:none;border-radius:4px;padding:12px;
+    font-family:inherit;font-weight:bold;font-size:15px;cursor:pointer;
+    letter-spacing:.5px;box-shadow:0 3px 0 #6b4f16;transition:.1s;
+  }
+  button.cta:hover{filter:brightness(1.08)}
+  button.cta:active{transform:translateY(2px);box-shadow:0 1px 0 #6b4f16}
+  button.ghost{
+    background:transparent;color:var(--ink-dim);border:1px solid var(--line);
+    border-radius:4px;padding:12px 14px;font-family:inherit;cursor:pointer;font-size:14px;
+  }
+  button.ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+
+  /* results */
+  .results-empty{
+    text-align:center;color:var(--ink-dim);padding:60px 20px;font-style:italic;
+  }
+  .results-empty .big{font-size:40px;margin-bottom:12px;opacity:.4}
+  /* свёрнутое состояние правой панели */
+  #promptPanel.collapsed{padding-bottom:14px;align-self:flex-start}
+  #promptPanel.collapsed .results-empty{padding:18px 16px;font-size:13px}
+  #promptPanel.collapsed .results-empty .big{font-size:26px;margin-bottom:6px}
+
+  .build{
+    border:1px solid var(--line);border-radius:6px;margin-bottom:16px;overflow:hidden;
+    background:rgba(0,0,0,.18);
+  }
+  .build.viable{border-left:4px solid var(--ok)}
+  .build.possible{border-left:4px solid var(--warn)}
+  .build-head{
+    display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;
+    background:linear-gradient(180deg,rgba(224,178,76,.08),transparent);
+  }
+  .build-head:hover{background:rgba(224,178,76,.12)}
+  .build-head .tier{
+    font-family:"Courier New",monospace;font-weight:bold;font-size:15px;
+    width:30px;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .tier-S{background:#c9a227;color:#1a1206}
+  .tier-A{background:#5a8f6b;color:#0d1a10}
+  .tier-B{background:#4a5a8f;color:#0a0f1a}
+  .build-title{flex:1}
+  .build-title .name{font-size:16px;color:var(--gold);font-weight:bold}
+  .build-title .tribe-tag{font-size:12px;color:var(--ink-dim)}
+  .badge{
+    font-size:11px;padding:3px 8px;border-radius:10px;letter-spacing:.5px;
+    text-transform:uppercase;font-family:"Courier New",monospace;flex:none;
+  }
+  .badge.viable{background:rgba(111,191,115,.18);color:var(--ok);border:1px solid var(--ok)}
+  .badge.possible{background:rgba(217,139,60,.15);color:var(--warn);border:1px solid var(--warn)}
+  .chev{color:var(--brass);transition:.2s;flex:none}
+  .build.open .chev{transform:rotate(90deg)}
+
+  .build-body{display:none;padding:4px 16px 16px;border-top:1px solid var(--line)}
+  .build.open .build-body{display:block}
+  .sec{margin-top:14px}
+  .sec .lbl{
+    font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold-dim);
+    margin-bottom:5px;display:flex;align-items:center;gap:6px;
+  }
+  .sec .lbl:before{content:"◆";color:var(--brass);font-size:9px}
+  .sec p{margin:0;font-size:14px;color:var(--ink)}
+  .mins{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .min{
+    font-size:13px;padding:4px 9px;border-radius:3px;border:1px solid var(--brass);
+    background:rgba(0,0,0,.3);
+  }
+  .min.key{border-color:var(--gold);color:var(--gold);background:rgba(224,178,76,.1);font-weight:bold}
+  .prereq{
+    font-size:13px;margin-top:4px;padding:8px 10px;border-radius:4px;
+    background:rgba(0,0,0,.25);border:1px dashed var(--brass);
+  }
+  .prereq.met{border-color:var(--ok);color:var(--ok)}
+  .prereq.unmet{border-color:var(--warn);color:var(--warn)}
+  .counter{color:var(--danger)}
+
+  .hero-note{
+    margin-bottom:16px;padding:12px 14px;border-radius:6px;
+    background:rgba(224,178,76,.07);border:1px solid var(--gold-dim);
+  }
+  .hero-note .lbl{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px}
+  .hero-note p{margin:4px 0;font-size:14px}
+
+  footer{text-align:center;margin-top:40px;color:var(--ink-dim);font-size:12px;font-style:italic}
+  .src{color:var(--brass)}
+  a{color:var(--gold-dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>🔥 Горящий зад Тимура, Паши и Никитосика</h1>
+    <div class="subtitle">(без Полины) · помощник по Hearthstone Battlegrounds</div>
+    <div class="patch-badge">СЕЗОН 13 · ПАТЧ 36.0 · АНОМАЛИИ</div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT: INPUTS -->
+    <div class="panel" id="controls">
+      <h2><span class="num">1</span> Типы в лобби</h2>
+      <div class="hint">Отметь типы, которые есть в этой игре</div>
+      <div class="tribes" id="tribes">
+        <div class="tribe" data-id="beast"><input type="checkbox" value="beast"><span class="ic">🐺</span><span>Звери</span></div>
+        <div class="tribe" data-id="demon"><input type="checkbox" value="demon"><span class="ic">😈</span><span>Демоны</span></div>
+        <div class="tribe" data-id="dragon"><input type="checkbox" value="dragon"><span class="ic">🐉</span><span>Драконы</span></div>
+        <div class="tribe" data-id="elemental"><input type="checkbox" value="elemental"><span class="ic">🔥</span><span>Элементали</span></div>
+        <div class="tribe" data-id="mech"><input type="checkbox" value="mech"><span class="ic">⚙️</span><span>Механизмы</span></div>
+        <div class="tribe" data-id="murloc"><input type="checkbox" value="murloc"><span class="ic">🐟</span><span>Мурлоки</span></div>
+        <div class="tribe" data-id="naga"><input type="checkbox" value="naga"><span class="ic">🐍</span><span>Наги</span></div>
+        <div class="tribe" data-id="pirate"><input type="checkbox" value="pirate"><span class="ic">🏴‍☠️</span><span>Пираты</span></div>
+        <div class="tribe" data-id="quilboar"><input type="checkbox" value="quilboar"><span class="ic">🐗</span><span>Свины</span></div>
+        <div class="tribe" data-id="undead"><input type="checkbox" value="undead"><span class="ic">💀</span><span>Нежить</span></div>
+      </div>
+
+      <div class="field">
+        <label>Аномалия (если есть)</label>
+        <select id="anomaly"><option value="">— нет / не выбрано —</option></select>
+      </div>
+
+      <div class="field">
+        <label><span class="num" style="display:inline-flex;width:18px;height:18px;font-size:11px">2</span> 4 героя на выбор</label>
+        <div class="heroes">
+          <select id="h1" class="hero-sel"><option value="">— Герой 1 —</option></select>
+          <select id="h2" class="hero-sel"><option value="">— Герой 2 —</option></select>
+          <select id="h3" class="hero-sel"><option value="">— Герой 3 —</option></select>
+          <select id="h4" class="hero-sel"><option value="">— Герой 4 —</option></select>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="cta" onclick="askAI('claude')">Спросить Claude</button>
+        <button class="cta" onclick="askAI('gemini')" style="background:linear-gradient(180deg,#6a9fd4,#3f6fa8);box-shadow:0 3px 0 #2b4d75">Спросить Gemini</button>
+      </div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="ghost" onclick="resetAll()" style="flex:1">Сброс</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: PROMPT -->
+    <div class="panel collapsed" id="promptPanel">
+      <h2><span class="num">✦</span> Промпт для ИИ</h2>
+      <div id="results">
+        <div class="results-empty">
+          <div class="big">🧠</div>
+          Выбери всё слева и нажми «Спросить Claude» или «Спросить Gemini».
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="patch-badge" style="margin-top:0">Сделано by Nikitosick под вискарик</div>
+  </footer>
+</div>
+
+<script>
+/* ============ DATA: heroes & anomalies (Blizzard RU loc, S13) ============ */
+const HEROES=["А.Ф.Ка","Ал'акир","Алекстраза","Аранна Звездочет","Артанис","Ахалаймахалай","Безымянный","Билетикус","Бру'кан","Бурекрыл","Вандар Грозовая Вершина","Варден Луч Рассвета","Вестник смерти Черношип","Вечная Токи","Воевода Саурфанг","Вол'джин","Галакронд","Галл","Гафф Рунический Тотем","Господин Часовщик","Грибомант Флургл","Джандис Барова","Джим Рейнор","Джордж Падший","Доктор Гу'ляка","Дорнозму Освобожденный","Дрек'Тар","Дрыжеглот","Зефрис Великий","Зирелла","Змеиные глазки","И'Шарадж","Изера","Иллидан","Инге Стальной Гимн","Ини Штормоверть","Исказительница Хроми","Йогг-Сарон","К'Тун","Капитан Др-р-робитель","Капитан Кривоклык","Капитан Юдора","Кариэль Роум","Керриган, Королева Клинков","Клонист Зерек","Кнопка","Кок Пирожок","Королева Азшара","Королева Пыхлевих","Король Мукла","Король воргенов Генн","Король воров Вихлепых","Король-лич","Крагг Поднебесный","Крысиный король","Куртрус Ливень Пепла","Леди Вайш","Лесной властелин Кенарий","Лич Баз'хиал","Ло, живая легенда","Лорд Баров","Лорд Джараксус","Лоскутик","Мадам Гойя","Майев Песнь Теней","Малигос","Мастер Нгуен","Менеджер Марин","Механо-усилитель","Миллифисент Манашторм","Миллхаус Манашторм","Мистер Бигглсуорт","Морхи","Музыкальный менеджер E.T.C.","Мурлок Холмс","Мутанус Пожиратель","Н'Зот","Нави'ла","Ноздорму","Озумат","Ониксия","Пирамидон","Пират Глазастик","Посол Фаэлин","Предсказатель Нобундо","Принц Галливикс","Принц Кель'тас","Профессор Мерзоцид","Рагнарос","Раканишу","Рено Джексон","Рок-мастер Вун","Рокара","Сайлас Новолуний","Серокрон","Сильвана Ветрокрылая","Синдрагоса","Сир Денатрий","Скаббс Маслорез","Смертокрыл","Смотритель","Снид","Страж леса Ому","Суперзлодей Рафаам","Сэр Финли Мрргглтон","Тавиш Грозовая Вершина","Тамсин Роум","Танцор Дэрил","Тей'телан Кровавый Взор","Терон Кровожад","Тесс Седогрив","Торим, владыка бури","Тюремщик","Укротитель ящеров Бранн","Ухлюпистый Хлюп","Чо","Эдвин ван Клиф","Экзарх Отаар","Элиза Звездочет"];
+const ANOMALIES=["Секреты Норганнона","Большая удача","Ларец Марина","Аномальная история","Аномальный Перекресток","Малая удача","Хваткий крюк титанов","Малые сумки","Большие сумки","Два по цене одного","Призы Ярмарки Новолуния","Призыв камня клятвы","Поднять флаг","Аномальный куб","Зрительское голосование","Вершина алхимии","Аномальная экспедиция","Золотая стрела","Ложные идолы","Приз-зывание","Кто-то звал компаньонов?","Буря Голганнета","Честь разведчика","Йоггизей","Куча сокровищ"];
+const ANOMFX={"Секреты Норганнона":"В таверну добавляется 7-й уровень. Начинаешь матч с +10 брони.","Большая удача":"Вторая сила героя «Большой хрустальный шар».","Ларец Марина":"Все играют за менеджера Марина. Вторая сила героя: «Растущая коллекция».","Аномальная история":"Вторая сила героя «Альтернативная история».","Аномальный Перекресток":"Вторая сила героя «Хрономальный Перекресток».","Малая удача":"Вторая сила героя «Малый хрустальный шар».","Хваткий крюк титанов":"Первое существо на каждом ходу вербуешь бесплатно.","Малые сумки":"Вторая сила героя «Фантастическое сокровище».","Большие сумки":"Вторая сила героя «Растущая коллекция».","Два по цене одного":"Первая купленная карта за ход даёт свою копию.","Призы Ярмарки Новолуния":"Каждые 4 хода раскапываешь приз ярмарки Новолуния.","Призыв камня клятвы":"Существа из малой хрономалии в таверне на 7-м ходу, из ключевой — на 10-м.","Поднять флаг":"Каждый 3-й ход получаешь заклинание, добавляющее простые копии существа в твой пул.","Аномальный куб":"Вторая сила героя «Загадочный куб», открывается на 5-м ходу.","Зрительское голосование":"В начале хода один игрок выбирает карту — в конце хода её получают все.","Вершина алхимии":"Начинаешь матч с «Озолотителем».","Аномальная экспедиция":"В начале игры раскапываешь существ 6-го, 4-го и 2-го уровня.","Золотая стрела":"Каждые 3 хода получаешь «Золотую стрелу».","Ложные идолы":"Нужно 2 копии для золотого. Золотые дают монетки вместо награды за триплет.","Приз-зывание":"При улучшении таверны раскапываешь приз ярмарки 1-го уровня (растёт).","Кто-то звал компаньонов?":"В таверне есть компаньоны.","Буря Голганнета":"Существа стоят 2 золота. Нельзя обновлять таверну — она обновляется сама при покупке.","Честь разведчика":"Начинаешь матч с золотым терпеливым разведчиком.","Йоггизей":"В начале каждого хода ВСЕ игроки крутят одно колесо Йогг-Сарона.","Куча сокровищ":"На 5/7/8 ходу раскапываешь золотое существо 3/5/6 уровня таверны."};
+
+/* ============ HERO SYNERGY (S13, by kit/type) ============ */
+const HEROSYN={"Королева Азшара":{t:["naga"],r:"scale",n:"Сила героя качает Наг/спеллы — топ под наговое лобби."},"Леди Вайш":{t:["naga"],r:"scale",n:"Наги: разыгрывает спеллы/чародейство."},"Сильвана Ветрокрылая":{t:["undead","beast"],r:"deathrattle",n:"Хрипы — под Нежить/Зверей (Голдринн, Тит)."},"Король-лич":{t:["undead"],r:"deathrattle",n:"Reborn/хрипы — прямой буст Нежити."},"Терон Кровожад":{t:["undead","beast"],r:"deathrattle",n:"Удваивает хрип — Нежить/Звери (Голдринн)."},"Тамсин Роум":{t:["undead","demon"],r:"deathrattle",n:"Копирует хрип-эффекты — Нежить/Демоны."},"Ониксия":{t:["dragon","beast"],r:"tempo",n:"Саммон дракончиков — темп, синергия с хрипами/зверьём."},"Смертокрыл":{t:["dragon"],r:"tempo",n:"Массовый стат-баф — драконий темп."},"Рагнарос":{t:["elemental"],r:"scale",n:"Элементали."},"Ал'акир":{t:["elemental"],r:"tempo",n:"Кейворды на первом миньоне — элементали/темп."},"Грибомант Флургл":{t:["murloc"],r:"tempo",n:"Мурлоки — саммон при смерти мурлока."},"Мурлок Холмс":{t:["murloc"],r:"value",n:"Мурлоки/детектив-квесты."},"Ухлюпистый Хлюп":{t:["murloc"],r:"scale",n:"Мурлоки."},"Король Мукла":{t:["beast"],r:"tempo",n:"Бананы/статы — зверьё и не только."},"Крысиный король":{t:["beast"],r:"scale",n:"Смена типа зверей — под Зверей."},"Лесной властелин Кенарий":{t:["beast","elemental"],r:"scale",n:"Баф в конце хода — Звери/статы."},"Смотритель":{t:["mech"],r:"scale",n:"Механизмы/магнетизм."},"Механо-усилитель":{t:["mech"],r:"scale",n:"Механизмы."},"Миллифисент Манашторм":{t:["mech"],r:"scale",n:"Механизмы — статы механизмам в таверне."},"Доктор Гу'ляка":{t:["quilboar"],r:"scale",n:"Свины/самоцветы."},"Тей'телан Кровавый Взор":{t:["quilboar"],r:"scale",n:"Кровавые самоцветы — Свины."},"Лорд Джараксус":{t:["demon"],r:"scale",n:"Демоны — статы демонам."},"Принц Кель'тас":{t:["demon"],r:"tempo",n:"Демоны/дешёвые миньоны."},"Керриган, Королева Клинков":{t:["demon","mech"],r:"tempo",n:"Ассимиляция — гибкий темп."},"Пират Глазастик":{t:["pirate"],r:"tempo",n:"Пираты."},"Капитан Кривоклык":{t:["pirate"],r:"tempo",n:"Пираты."},"Крагг Поднебесный":{t:["pirate","beast"],r:"tempo",n:"Пираты/двойные атаки."},"Джордж Падший":{t:[],r:"econ",n:"Дивайны — темповый герой, хорош против скама."},"Капитан Юдора":{t:[],r:"econ",n:"Раскопка золотых — сейчас слабее, но экономика."},"Принц Галливикс":{t:[],r:"econ",n:"Экономика/монетки — жадные скейл-билды."},"Посол Фаэлин":{t:[],r:"econ",n:"Раскопки — гибкий."},"Рено Джексон":{t:[],r:"tempo",n:"Уничтожает вражеского миньона — панический топ-4."},"Галакронд":{t:[],r:"scale",n:"Раскапывает существ — универсальный скейл."},"Мадам Гойя":{t:[],r:"value",n:"Держит миньона в руке — гибкий пивот."},"Йогг-Сарон":{t:[],r:"random",n:"Хаос/рандом-баф — универсал."},"Н'Зот":{t:["undead","beast"],r:"deathrattle",n:"Хрипы — Нежить/Звери."},"К'Тун":{t:[],r:"scale",n:"Массовый баф — универсальный скейл."},"И'Шарадж":{t:[],r:"tempo",n:"Доп-миньон — темп."},"Лоскутик":{t:[],r:"tempo",n:"60 брони, быстрый выход в t6 — гибкий, жмёт темп."},"Королева Пыхлевих":{t:[],r:"tempo",n:"Дешёвый апгрейд таверны — топовый темп-герой."},"Рокара":{t:[],r:"tempo",n:"Провокатор/атака — темп."},"Тесс Седогрив":{t:[],r:"value",n:"Копирует магазин соперника — value."},"Эдвин ван Клиф":{t:[],r:"scale",n:"Баф после розыгрышей — скейл одного миньона."}};
+
+
+/* ============ TRIBE LIST ============ */
+const TRIBES = [
+  {id:"beast",   name:"Звери",     ic:"🐺"},
+  {id:"demon",   name:"Демоны",    ic:"😈"},
+  {id:"dragon",  name:"Драконы",   ic:"🐉"},
+  {id:"elemental",name:"Элементали",ic:"🔥"},
+  {id:"mech",    name:"Механизмы", ic:"⚙️"},
+  {id:"murloc",  name:"Мурлоки",   ic:"🐟"},
+  {id:"naga",    name:"Наги",      ic:"🐍"},
+  {id:"pirate",  name:"Пираты",    ic:"🏴‍☠️"},
+  {id:"quilboar",name:"Свины",     ic:"🐗"},
+  {id:"undead",  name:"Нежить",    ic:"💀"},
+];
+
+/* ============ BUILD DATABASE — Season 13, patch 35.2.2 ============ */
+/* tier: S/A/B (rough meta strength) ; prereq: other tribes that strongly boost this build */
+const BUILDS = [
+  {
+    tribe:"pirate", tier:"S", name:"Bounty Hunters (Пираты)",
+    key:["Небесный адмирал Роджерс","Гордый корсар","Укротитель ящеров Бранн"],
+    support:["Бедствующий плут","Коллекционер мечей","Гнусный друст","Светящаяся Чешуя"],
+    prereq:["naga","elemental","dragon","murloc"],
+    prereqNote:"Наги (Светящаяся Чешуя = Дивайны), затем Элементали/Драконы/Мурлоки для спелл-статов",
+    concept:"Уходишь в бесконечное золото и ресурсы. Sky Admiral даёт Bounty за трату золота, Гордый корсар удваивает/утраивает эффект баунти, Бранн усиливает батлкраи.",
+    commit:"НЕ коммить рано на мелких пиратах (Gunpowder Courier, Dual Wield). Первый сигнал — Гордый корсар + Бранн или Shipwrecked Rascal. Небесный адмирал Роджерс = ключ для полного коммита.",
+    win:"~15 золота в начале хода от тринкетов + голд. Бранн + Sky Admiral, либо 2 Sky Admiral + голд. Гордый корсар. Играешь быстро, оптимизируешь Тонты/Клив/Дивайны. Коллекционер мечей — большой клив.",
+    trinkets:"Privateer Portrait (лучший, буквально под билд), Trusty Crowbar (нужны ресурсы), Miniature Ship (баунти = таверн-спеллы, +2/+3 пиратам).",
+    counter:"Ставь Тонт на слабейшего миньона справа (против Клива). Пираты без Дивайнов — работает Poison/скам (Leeroy)."
+  },
+  {
+    tribe:"elemental", tier:"S", name:"Arcane Azerite Balinda (Элементали)",
+    key:["Укротитель ящеров Бранн","Балинда Каменный Очаг","Порождение силовой линии","Загробник воздуха / Living Azerite"],
+    support:["Ichoron the Protector (голд)","Элементали с боевым кличем","Неудержимый маноплеск"],
+    prereq:[],
+    prereqNote:"Самодостаточны. Refreshing Anomaly / Tavern Tempest для рефрешей.",
+    concept:"Два пути: (1) Неудержимый маноплеск + цикл элементалей + Firelands Fugitive; (2) баф одного миньона в таверне статами, потом Arcane Absorption (Порождение силовой линии) переносит половину статов на борду. С Balinda — каст дважды.",
+    commit:"Нужен Бранн + источник статов в таверне (Загробник воздуха / Living Azerite / En-Djinn Blazer). Потом ищешь Балинда Каменный Очаг + Порождение силовой линии — сигнал к коммиту. Flaming Enforcer если попался рано.",
+    win:"Трио для статов: Загробник воздуха + Living Azerite + En-Djinn Blazer. Buff одного миньона в таверне, Порождение силовой линии переносит на борду, Balinda дублирует Arcane Absorption. Голд Ichoron = вечные Дивайны через Technical Element.",
+    trinkets:"Upstart Embers (лучший, играет с супер-миньоном в таверне). Nomi Sticker осторожно — стат-билд рандомный, может не подхватить.",
+    counter:"Тяжело контрить. Обычно много Дивайнов + статы. Kaboom чтобы снять их Дивайны, если у тебя своих нет. Нокаут раньше или обгон по статам."
+  },
+  {
+    tribe:"dragon", tier:"S", name:"Draconic Chromadrake (Драконы)",
+    key:["Укротитель ящеров Бранн","Драконья хранительница"],
+    support:["Калесгос, аспект магии","Огневой пробудитель","Таресгоса","Упорный поэт","Хранитель кольца (t6)"],
+    prereq:["naga","pirate","murloc"],
+    prereqNote:"Драконы сами не генерят спеллы (кроме Ignition Specialist) — нужен другой тип для спелл-генерации: Наги / Пираты / Мурлоки",
+    concept:"Батлкрай-версия проще всего. Хромадрейки дают стат-буст (драконам и спеллам) + золото. Бранн решает проблему золота и даёт win condition. Все 6 Хромадрейков — батлкраи.",
+    commit:"Держи темп на Таресгоса и мелких драконах. НЕ покупай Хромадрейков рано — слабые. Как получил Бранн — ищи Драконья хранительница. Не оверкоммить на t6.",
+    win:"Стат-спелл-буст + спелл-генерация. Буст лёгкий с Брэнном. Генерацию — комбинируй с другим типом (Rimescale Princess если Наги, Чарожабр-грибовед если Мурлоки, баунти-пираты).",
+    trinkets:"Bronzebeard Portrait (лучший — даёт ключевого Брэнна). Chromatic Tear если уже есть Бранн.",
+    counter:"Снять Дивайны, потом Poison (у драконов нет Reborn). Скам. У драконов Виндфури — ставь Тонт на не-ключевых."
+  },
+  {
+    tribe:"mech", tier:"A", name:"Moonsteel & Sky Golems (Механизмы)",
+    key:["Scrap Scraper + Тит Ривендер","Развалюха-утилизатор","Исполин из лунной стали + Чародейка драккари"],
+    support:["Магнетизации","P-0UL-TR-0N","Deflect-o-Bot","Падающий небесный голем"],
+    prereq:[],
+    prereqNote:"Самодостаточны. Accord-o-tron для золота.",
+    concept:"Магнетизации + миньоны, юзающие их (Развалюха-утилизатор: +6/+6 всем после любой магнетизации). Moonsteel Juggernaut сильно бафнут — даёт 2×4/4 сателлита. 1 драккари + 1 Moonsteel = 4 сателлита.",
+    commit:"Нужен Исполин из лунной стали + Чародейка драккари ИЛИ 1-2 Scrap Scraper + Тит Ривендер. Momentum с Accord-o-tron (золото) + тринкеты. Без магнетизаций P-0UL-TR-0N/Sky Golem бесполезны.",
+    win:"Moonsteel сателлиты растут каждый ход. Deflect-O-Bot + сателлиты = вечные Дивайны. Развалюха-утилизатор — масс-стат. Падающий небесный голем работает с Prosthetic Hand (сохраняет статы после Reborn).",
+    trinkets:"Beatboxer Portrait (темп+ресурсы), Accord-o-Tron Portrait (бесконечка, 0 голд), Divine Signet (если Charging Czarina).",
+    counter:"Tunnel Blaster взрывает все Дивайны — главный контр. Leeroy против P-0UL-TR-0N или сильного Дивайн-меха."
+  },
+  {
+    tribe:"murloc", tier:"A", name:"Magicfin Lookout (Мурлоки)",
+    key:["Укротитель ящеров Бранн","Чарожабр-грибовед","Mrrglin Burglar"],
+    support:["Первобытный художник","Изрыгатель желчи","Choral Burglar","Bream Counter"],
+    prereq:[],
+    prereqNote:"Самодостаточны, но золотой Бранн критичен.",
+    concept:"Старые добрые мурлоки. Нужен Бранн, после золочения всё работает. Чарожабр-грибовед: следующий спелл за ход даёт t1 мурлока с батлкраем скастить этот спелл. С Брэнном — дважды.",
+    commit:"Рано мурлоки неудобные, избегай. Ищи King Bugurgle и Deepwater Chieftain для темпа. В миде — Бранн + Mrrglin Burglar даёт буст статов до след. стадии. Нужны ресурсы — бери тринкет на золото.",
+    win:"Чарожабр-грибовед — сердце. Cloning Conch: с Брэнном получаешь 6 мурлоков с одного спелла. Первобытный художник даёт статы через мусор/шаффлы. Channel the Devourer чистит борду. Bilespitter — скам.",
+    trinkets:"На младших — рвись на t5 как можно быстрее (ключевые миньоны там и на t6). Bronzebeard Portrait лучший (даёт Брэнна, можно Poison на него).",
+    counter:"Очень трудно контрить. Нужно МНОГО Дивайнов (мурлоки часто венозные + большие). Стакай Дивайны и надейся."
+  },
+  {
+    tribe:"quilboar", tier:"A", name:"Windfury Keywordmania (Свины)",
+    key:["Шаман Песни Земли + Чародейка драккари","Лозомантка + Три свинобразика + Тит Ривендер"],
+    support:["Hired Ritualist (золото)","Бранн","Смотрительница кабанов","Redtusk Thornraiser","Bristleback Bully"],
+    prereq:[],
+    prereqNote:"Самодостаточны, но ОЧЕНЬ нужны ресурсы (Hired Ritualist / тринкеты). Darkgaze Elder бафнут.",
+    concept:"Свины мощные, но тяжело раскачиваются. Hired Ritualist — критичен (ресурсы). Новое: Кровавые Самоцветы с кейвордами (Дивайн/Reborn/Тонт от Смотрительница кабанов / Redtusk / Bristleback Bully). Earthsong Shaman юзает кейворды.",
+    commit:"Нельзя играть без ресурсов. Нужны 2 Hired Ritualist или Бранн. + Earthsong Shaman / Три свинобразика — момент пивота. Оценивай HP/тринкеты/темп — можно улететь в топ-2 или лечь в миде.",
+    win:"Путь 1: Три свинобразика + Titus + Лозомантка (атака). Путь 2 (кейворды): Earthsong Shaman со всеми кейвордами (Windfury+Reborn+Дивайн+Тонт), кастует самоцветы всем в конце хода. + драккари = 10 кастов.",
+    trinkets:"Quilligraphy Set (статы на самоцветы, но нужен Reborn), Great Boars Sticker (+2/+2 самоцветам, 0 голд), Blood Amulet (Three Lil'), Surveyor Portrait (hand-самоцветы + Geomagus).",
+    counter:"Лучший контр — снести их в миде (1-2 слабых хода). Свинам нужен этот разгон."
+  },
+  {
+    tribe:"undead", tier:"A", name:"Надоеда из катакомб (Нежить)",
+    key:["Попечительница трупов","Надоеда из катакомб","Тит Ривендер"],
+    support:["Вурдалак Ледяных Оков","Sinrunner Blanchy","Plaguerunner"],
+    prereq:[],
+    prereqNote:"Самодостаточны. Надоеда из катакомб бафнут.",
+    concept:"Cadever-билд теперь проще. High-attack/Reborn миньоны дают темп, пока не соберёшь трио: Попечительница трупов + Надоеда из катакомб + Titus. Caretaker умирает первым, баф от Crasher удваивается (утраивается голд) Титусом.",
+    commit:"Рано нежить слабая — не покупай рандом. Нужны Попечительница трупов + Plaguerunner для reborn-high-attack. Мумификатор лучше Prosthetic Hand. Пивот при получении Надоеда из катакомб (если уже есть Caretaker). Titus — маст.",
+    win:"Трио на борде: Crasher + Cadever + Titus. Sinrunner Blanchy (reborn с полными статами). Вурдалак Ледяных Оков (reborn + статы + единственный источник золота — держи миньонов в руке, продавай след. ход).",
+    trinkets:"Rivendare Portrait (лучший — даёт Титуса, делает сильнейшим на борде).",
+    counter:"Клив или Sin'dorei Straight Shot."
+  },
+  {
+    tribe:"naga", tier:"A", name:"Darkcrest Groundbreaker (Наги)",
+    key:["Землекрушительница + Darkcrest Strategist","Тихая мыслительница + Выходец из Водоворота + Беспощадная королевская стражница + Бранн"],
+    support:["Наги с чародейством","Драконья хранительница","Rimescale Princess","Глубинный громила"],
+    prereq:["dragon"],
+    prereqNote:"Как драконы — Наги гораздо сильнее, если Драконы в игре (Бранн + Драконья хранительница для Хромадрейков)",
+    concept:"Требует трёх вещей: стат-буст, генерация спеллов, генерация миньонов через Spellcraft. Тихая мыслительница — главный спелл-буст. Чем больше спеллов, тем сильнее Groundbreaker после игры миньона.",
+    commit:"Рано наги слабые. Темп-миньоны: Zesty Shaker, Глубинный громила, Rimescale Princess. Darkcrest Strategist — важнейший (больше наг + темп). Скейл быстрый с Брэнном (если Драконы). Balinda хорошо влезает.",
+    win:"2 Groundbreaker + 2 Darkcrest Strategist + генерация Spellcraft (золотой Rimescale). Играй быстро — много миньонов и спеллов за ход. Alt: Выходец из Водоворота + Беспощадная королевская стражница (спеллы в бою) + Ring Bearer.",
+    trinkets:"Groundbreaker Portrait (лучший), Guiding Candle / Nazjatar Postcard. Раньше — настраивай экономику (Spellcraft/спеллы/миньоны).",
+    counter:"Стат-билд — контри статы. Poison (почти нет Дивайнов) или скам (Leeroy). Статы размазаны по всем нагам — снайпить бесполезно."
+  },
+  {
+    tribe:"beast", tier:"A", name:"Goldrinn & The Rat King (Звери)",
+    key:["Голдринн, Великий волк","Владыка стоков","Тит Ривендер"],
+    support:["Страшный ара","Затаившийся левиафан","Банановый буян","Шустрый скарабей"],
+    prereq:[],
+    prereqNote:"Самодостаточны. (Stagadon-билд удалён — P-0UL-TR-0N вне зверей.)",
+    concept:"Классический summon-механизм. Goldrinn Deathrattle бафает зверей в бою, Владыка стоков саммонит кучу со статами. Банановый буян доп-буст, Затаившийся левиафан (высокая атака, если у врага нет Дивайнов).",
+    commit:"Найди Goldrinn как можно раньше — без него всё разваливается. Охотящаяся тигровая акула + Страшный ара + Рилак-металлист для генерации зверей. На t4-5 нужен трипл/тринкет/способ достать Goldrinn.",
+    win:"Порядок борды: Macaw → Goldrinn → Sewer Lords → Затаившийся левиафан/Банановый буян → Titus. Оставь слот для цикла Шустрый скарабей (Reborn/Windfury на Macaw и Goldrinn).",
+    trinkets:"Herald Sticker (лучший — все Deathrattle в начале боя), Wildfeather Duster (ресурсы если уже саммонишь), Fang Anklet (мини-Goldrinn).",
+    counter:"Клив, Poison. Снести до сборки трио."
+  },
+  {
+    tribe:"demon", tier:"B", name:"Delicious Fodder (Демоны)",
+    key:["Пепельный осквернитель","Укротитель ящеров Бранн","Демоны на ресурсах"],
+    support:["Imposing Persecutionist","Малчезар, принц танца","Bazaar Dealer","Злобный страж гнева","Дрессировщик безднощенят"],
+    prereq:[],
+    prereqNote:"Самодостаточны. НЕТ Дивайнов/Reborn — уязвимы к скаму.",
+    concept:"Новый кейворд Fodder: при рефреше твой демон съедает Demon Fodder (t1) в таверне. Buff статов в таверне. Дрессировщик безднощенят даёт +4/+4 миньонам t3 и ниже (включая Fodder).",
+    commit:"Пивот: Soul Rewinder или Пепельный осквернитель + ресурс-демон (Malchezaar/Bazaar Dealer) + Бранн. Потом бафай t2- в таверне через Дрессировщик безднощенят, цикли с Брэнном, ешь, повторяй.",
+    win:"Выбери 1-2 механики: Tavern Spells (2 Bazaar Dealer + Batty Terrorguard) ИЛИ Fodder (Злобный страж гнева + Void Pup + Woodland Defiler + Consummate Conqueror). Золотой Бранн + Fodder = лучший стат-гейн.",
+    trinkets:"Defiler Portrait (Fodder, -3 голд темпа), The Eye of Sargeras (бесконечка), Nether Pendant (урон себе → статы).",
+    counter:"Venom (Изрыгатель желчи) очень эффективен — у демонов нет Дивайнов этот сезон."
+  },
+];
+
+/* Back-to-Back — cross-tribe spell build, shown if Dragon+another spell tribe present */
+const BACK_TO_BACK = {
+  tribe:"special", tier:"A", name:"Back to Back (спелл-скейл, кросс-тайп)",
+  key:["Укротитель ящеров Бранн","Чародейка драккари","Балинда Каменный Очаг","Предвестница Катаклизма"],
+  support:["Кудесник Скверны","Драконья хранительница","Тихая мыслительница"],
+  prereq:["dragon"],
+  prereqNote:"Нужны Драконы (Драконья хранительница / Chromadrake спелл-статы) и желательно Элементали для рефрешей",
+  concept:"Спелл Back to Back баффает стат след. каста (после нёрфа — не умножает касты). КРИТИЧНО получить спелл-статы РАНО, скейл не догоняет задним числом.",
+  commit:"Slow-билд, нужен запас HP и ресурсы + Бранн. Кудесник Скверны работает с драккари. Предвестница Катаклизма возвращает Back to Back (кастуй последним спеллом хода).",
+  win:"Спелл-статы (Драконья хранительница, Felfire end-of-turn) → каст Back to Back → Cataclysmic возвращает несколько → Balinda дублирует/утраивает → экспонента.",
+  trinkets:"Не нужны для буста — бери ресурсы/темп. Heart of the Forest синергит, но проблема в темпе.",
+  counter:"Медленный старт — снести рано."
+};
+
+/* ============ RENDER TRIBES ============ */
+// типы уже в HTML статически — навешиваем только клики
+document.querySelectorAll('#tribes .tribe').forEach(function(d){
+  d.addEventListener('click',function(){
+    var cb = d.querySelector('input');
+    cb.checked = !cb.checked;
+    if(cb.checked){ d.classList.add('on'); } else { d.classList.remove('on'); }
+  });
+});
+
+/* ============ POPULATE hero & anomaly selects ============ */
+(function(){
+ try{
+  const heroSort = [...HEROES].sort((a,b)=>a.localeCompare(b,'ru'));
+  ['h1','h2','h3','h4'].forEach(id=>{
+    const sel = document.getElementById(id);
+    heroSort.forEach(h=>{
+      const o = document.createElement('option'); o.value=h; o.textContent=h; sel.appendChild(o);
+    });
+  });
+  const anomSort = [...ANOMALIES].sort((a,b)=>a.localeCompare(b,'ru'));
+  const asel = document.getElementById('anomaly');
+  anomSort.forEach(a=>{
+    const o = document.createElement('option'); o.value=a; o.textContent=a; asel.appendChild(o);
+  });
+ }catch(e){ console.error('populate error', e); }
+})();
+
+function selectedTribes(){
+  return [...document.querySelectorAll('#tribes input:checked')].map(i=>i.value);
+}
+function tribeName(id){ const t=TRIBES.find(x=>x.id===id); return t?t.name:id; }
+function tribeIc(id){ const t=TRIBES.find(x=>x.id===id); return t?t.ic:"◆"; }
+
+/* ============ ANALYZE ============ */
+function buildPrompt(){
+  const sel = selectedTribes();
+  const heroes = ['h1','h2','h3','h4'].map(id=>document.getElementById(id).value.trim()).filter(Boolean);
+  const anomaly = document.getElementById('anomaly').value.trim();
+
+  if(sel.length===0){ return {error:'Отметь хотя бы один тип в лобби.'}; }
+
+  // тип-инфа
+  const tribeList = sel.map(tribeName).join(', ');
+
+  // аномалия + эффект
+  let anomBlock = 'нет';
+  if(anomaly){
+    const fx = ANOMFX[anomaly];
+    anomBlock = '«'+anomaly+'»' + (fx? ' — '+fx : '');
+  }
+
+  // герои
+  const heroBlock = heroes.length ? heroes.join(', ') : '(не выбраны)';
+
+  // билды под выбранные типы (из базы)
+  let avail = BUILDS.filter(b=> sel.includes(b.tribe));
+  if(sel.includes('dragon') && sel.length>=2) avail.push(BACK_TO_BACK);
+  const tierRank = {S:0,A:1,B:2};
+  function prereqMet(b){ return (!b.prereq||!b.prereq.length) || b.prereq.some(p=>sel.includes(p)); }
+  avail.sort((a,b)=>{ const av=prereqMet(a)?0:1,bv=prereqMet(b)?0:1; if(av!==bv)return av-bv; return tierRank[a.tier]-tierRank[b.tier]; });
+
+  let buildsText = avail.map(b=>{
+    return `• ${b.name} [тир ${b.tier}]\n  Ключевые: ${b.key.join(', ')}\n  Идея: ${b.concept}\n  Пивот: ${b.commit}\n  Win: ${b.win}\n  Тринкеты: ${b.trinkets}`;
+  }).join('\n\n');
+
+  const prompt =
+`Ты — эксперт по Hearthstone Battlegrounds, Сезон 13 (патч 36.0). Помоги мне выбрать героя и стратегию под конкретный матч. Думай над связкой типов, аномалии и сил героев, а не выдавай шаблон.
+
+МОЙ МАТЧ:
+• Типы существ в лобби: ${tribeList}
+• Аномалия: ${anomBlock}
+• Мои 4 героя на выбор: ${heroBlock}
+  (Ты знаешь силы этих героев в Battlegrounds — учти их эффект, особенно во взаимодействии с аномалией и типами выше.)
+
+СПРАВКА ПО СБОРКАМ ПОД ЭТИ ТИПЫ (моя база, можешь опираться и дополнять своими знаниями):
+
+${buildsText || '(нет зашитых сборок под эти типы — предложи свои)'}
+
+ЧТО МНЕ НУЖНО:
+1. Кого из 4 героев взять и почему — с учётом И типов в лобби, И аномалии (если она меняет ценность героя, объясни как).
+2. 2-3 приоритетные сборки под это лобби: ключевые миньоны, когда пивотить, win condition, какие тринкеты искать.
+3. Кратко: чего опасаться в этом лобби (что могут собрать соперники) и как контрить.
+
+Отвечай по делу, на русском.`;
+
+  return {prompt, heroesCount:heroes.length, hasAnomaly:!!anomaly};
+}
+
+function askAI(which){
+  const res = document.getElementById('results');
+  const panel = document.getElementById('promptPanel');
+  const out = buildPrompt();
+  if(out.error){
+    if(panel) panel.classList.add('collapsed');
+    res.innerHTML = `<div class="results-empty"><div class="big">⚠</div>${out.error}</div>`;
+    return;
+  }
+  if(panel) panel.classList.remove('collapsed');
+  const p = out.prompt;
+  const url = which==='claude' ? 'https://claude.ai/new' : 'https://gemini.google.com/app';
+  const name = which==='claude' ? 'Claude' : 'Gemini';
+
+  // copy to clipboard
+  let copied = false;
+  try {
+    navigator.clipboard.writeText(p).then(()=>{}, ()=>{});
+    copied = true;
+  } catch(e){ copied = false; }
+
+  // render prompt + actions
+  res.innerHTML = `
+    <div style="margin-bottom:12px;padding:10px 12px;border-radius:6px;background:rgba(111,191,115,.1);border:1px solid var(--ok);color:var(--ok);font-size:13px">
+      ${copied?'✓ Промпт скопирован в буфер.':'Нажми «Скопировать промпт» ниже.'} Затем открой ${name} и вставь (Ctrl+V).
+      ${!out.heroesCount?'<br><span style="color:var(--warn)">Совет: герои не выбраны — ИИ ответит только по типам/аномалии.</span>':''}
+    </div>
+    <div class="btn-row" style="margin-bottom:12px">
+      <button class="cta" onclick="copyPrompt()">Скопировать промпт</button>
+      <button class="cta" onclick="window.open('${url}','_blank')" style="flex:none;padding:12px 16px;background:linear-gradient(180deg,#6a9fd4,#3f6fa8);box-shadow:0 3px 0 #2b4d75">Открыть ${name} ↗</button>
+    </div>
+    <textarea id="promptBox" readonly style="width:100%;min-height:320px;background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:12px;font-family:'Courier New',monospace;font-size:12.5px;line-height:1.5;resize:vertical">${escapeHtml(p)}</textarea>`;
+
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function copyPrompt(){
+  const box = document.getElementById('promptBox');
+  if(!box) return;
+  box.select();
+  try { navigator.clipboard.writeText(box.value); } catch(e){ document.execCommand('copy'); }
+  const btn = event.target;
+  const t = btn.textContent; btn.textContent = '✓ Скопировано';
+  setTimeout(()=>btn.textContent=t, 1500);
+}
+
+function resetAll(){
+  document.querySelectorAll('#tribes input').forEach(i=>i.checked=false);
+  document.querySelectorAll('#tribes .tribe').forEach(d=>d.classList.remove('on'));
+  ['anomaly','h1','h2','h3','h4'].forEach(id=>document.getElementById(id).value='');
+  const panel = document.getElementById('promptPanel');
+  if(panel) panel.classList.add('collapsed');
+  document.getElementById('results').innerHTML =
+    `<div class="results-empty"><div class="big">🧠</div>Выбери всё слева и нажми «Спросить Claude» или «Спросить Gemini».</div>`;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
